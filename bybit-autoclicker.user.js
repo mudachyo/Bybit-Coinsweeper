@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        *://bybitcoinsweeper.com/*
 // @grant        none
-// @version      1.2
+// @version      1.3
 // @author       mudachyo
 // @icon         https://mudachyo.codes/bybit/logo.jpg
 // @downloadURL  https://github.com/mudachyo/Bybit-Coinsweeper/raw/main/bybit-autoclicker.user.js
@@ -355,7 +355,7 @@ async function clickPlayAgain() {
                 playAgainButton.click();
                 console.log('Нажата кнопка "Play Again".');
                 await new Promise(r => setTimeout(r, 500));
-                const stillExists = document.body.contains(playAgainButton);
+                const stillExists = document.querySelector('button.btn.primary-btn');
                 if (!stillExists) {
                     console.log('Кнопка "Play Again" исчезла.');
                     clearInterval(interval);
@@ -367,6 +367,28 @@ async function clickPlayAgain() {
         }, 1000);
     });
 }
+
+async function checkAndClickPlayAgain() {
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            const loseScreen = document.querySelector('div._loseScreen_1qcks_36');
+            const playAgainButton = document.querySelector('button.btn.primary-btn');
+
+            if (loseScreen && playAgainButton) {
+                setTimeout(() => {
+                    if (document.querySelector('div._loseScreen_1qcks_36')) {
+                        playAgainButton.click();
+                        console.log('Нажата кнопка "Play Again" после проигрыша.');
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 7000);
+            }
+        }, 1000);
+    });
+}
+
+checkAndClickPlayAgain();
 
 async function main() {
     while (true) {
