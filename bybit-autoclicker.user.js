@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        *://bybitcoinsweeper.com/*
 // @grant        none
-// @version      1.1
+// @version      1.2
 // @author       mudachyo
 // @icon         https://mudachyo.codes/bybit/logo.jpg
 // @downloadURL  https://github.com/mudachyo/Bybit-Coinsweeper/raw/main/bybit-autoclicker.user.js
@@ -349,15 +349,7 @@ async function clickUntilDisappear(buttonXPath) {
 async function clickPlayAgain() {
     return new Promise((resolve) => {
         const interval = setInterval(async () => {
-            const winScreen = document.querySelector('div._winScreen_1qcks_35');
-            const loseScreen = document.querySelector('div._loseScreen_1qcks_36');
-            let playAgainButton = null;
-
-            if (winScreen) {
-                playAgainButton = winScreen.querySelector('button.btn.primary-btn');
-            } else if (loseScreen) {
-                playAgainButton = loseScreen.querySelector('button.btn.primary-btn');
-            }
+            const playAgainButton = document.querySelector('button.btn.primary-btn');
 
             if (playAgainButton) {
                 playAgainButton.click();
@@ -375,8 +367,6 @@ async function clickPlayAgain() {
         }, 1000);
     });
 }
-
-
 
 async function main() {
     while (true) {
