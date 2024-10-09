@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        *://bybitcoinsweeper.com/*
 // @grant        none
-// @version      1.4
+// @version      1.5
 // @author       mudachyo
 // @icon         https://mudachyo.codes/bybit/logo.jpg
 // @downloadURL  https://github.com/mudachyo/Bybit-Coinsweeper/raw/main/bybit-autoclicker.user.js
@@ -338,6 +338,20 @@ function estimate_mine_probability(field, row, col) {
   return count > 0 ? total_prob / count : 0.5;
 }
 
+// Функция для нажатия на кнопку "Play Again" каждые 3500 мс
+async function clickPlayAgainPeriodically() {
+    const interval = setInterval(() => {
+        const buttons = document.querySelectorAll('.btn.primary-btn');
+        buttons.forEach(button => {
+            if (button.textContent.trim() === 'Play Again') {
+                button.click();
+            }
+        });
+    }, 3500);
+}
+
+clickPlayAgainPeriodically();
+
 // Функция для нажатия на кнопку
 async function clickUntilDisappear(buttonXPath) {
     return new Promise((resolve) => {
@@ -363,82 +377,45 @@ async function clickUntilDisappear(buttonXPath) {
     });
 }
 
-// Функция для нажатия на кнопку "Play Again" при победе или проигрыше
-async function clickPlayAgain() {
-    return new Promise((resolve) => {
-        const interval = setInterval(async () => {
-            const playAgainButton = document.querySelector('button.btn.primary-btn');
-
-            if (playAgainButton) {
-                playAgainButton.click();
-                console.log('Нажата кнопка "Play Again".');
-                await new Promise(r => setTimeout(r, 500));
-                const stillExists = document.querySelector('button.btn.primary-btn');
-                if (!stillExists) {
-                    console.log('Кнопка "Play Again" исчезла.');
-                    clearInterval(interval);
-                    resolve();
-                } else {
-                    console.log('Кнопка "Play Again" всё ещё присутствует, нажимаем повторно...');
-                }
-            }
-        }, 1000);
-    });
-}
-
-async function checkAndClickPlayAgain() {
-    return new Promise((resolve) => {
-        const interval = setInterval(() => {
-            const loseScreen = document.querySelector('div._loseScreen_1qcks_36');
-            const playAgainButton = document.querySelector('button.btn.primary-btn');
-
-            if (loseScreen && playAgainButton) {
-                setTimeout(() => {
-                    if (document.querySelector('div._loseScreen_1qcks_36')) {
-                        playAgainButton.click();
-                        console.log('Нажата кнопка "Play Again" после проигрыша.');
-                        clearInterval(interval);
-                        resolve();
-                    }
-                }, 7000);
-            }
-        }, 1000);
-    });
-}
-
-checkAndClickPlayAgain();
-
 async function main() {
     while (true) {
         try {
+            // Проверяем наличие кнопки "Play Again"
+            const playAgainButton = document.querySelector('button.btn.primary-btn');
+            if (playAgainButton && playAgainButton.textContent.trim() === 'Play Again') {
+                console.log('Игра завершена. Нажимаем кнопку "Play Again".');
+                playAgainButton.click();
+                await new Promise(r => setTimeout(r, 1000));
+                continue;
+            }
+
             await waitForGameBoard();
 
             const boardState = parseGameBoard();
-        //    console.log('Поле:', boardState);
 
             if (boardState.length === 0) {
-            //    console.error('Ожидание поля');
                 const buttonXPath = '//*[@id="root"]/div[3]/div/button';
                 await clickUntilDisappear(buttonXPath);
                 continue;
             }
 
             const solution = solve_minesweeper(boardState);
-        //    console.log('Решение:', solution);
 
             if (solution && solution.action === 'click' && solution.row !== undefined && solution.col !== undefined) {
                 clickCell(solution.row, solution.col);
             } else if (solution && solution.action === 'finish') {
-                console.log('Игра завершена. Ищем кнопку "Play Again".');
-                await clickPlayAgain(); // Нажимаем на кнопку "Play Again" при победе или проигрыше
+                console.log('Игра завершена. Ожидаем появления кнопки "Play Again".');
             } else {
-            //    console.error('Некорректный ответ от функции');
+                // console.error('Некорректный ответ от функции');
             }
         } catch (error) {
-        //    console.error('Неожиданная ошибка в main:', error);
+            // console.error('Неожиданная ошибка в main:', error);
         }
+        
+        // Небольшая задержка перед следующей итерацией
+        await new Promise(r => setTimeout(r, 500));
     }
 }
 
-setTimeout(main, 3000);
+setTimeout(main, 1000);
 })();
