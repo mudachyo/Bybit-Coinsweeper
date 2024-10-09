@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        *://bybitcoinsweeper.com/*
 // @grant        none
-// @version      1.3
+// @version      1.4
 // @author       mudachyo
 // @icon         https://mudachyo.codes/bybit/logo.jpg
 // @downloadURL  https://github.com/mudachyo/Bybit-Coinsweeper/raw/main/bybit-autoclicker.user.js
@@ -134,6 +134,24 @@ function clickPlayNowButton() {
 }
 
 clickPlayNowButton();
+
+// Функция для поиска и клика по монете
+function searchAndClickCoin() {
+  const coinElement = document.querySelector('div img[src^="/assets/MNT"]');
+  
+  if (coinElement) {
+    console.log('Найдена монета:', coinElement.src);
+    try {
+      coinElement.click();
+      console.log('Выполнен клик по монете');
+    } catch (error) {
+      console.error('Ошибка при попытке клика:', error);
+    }
+  } else {
+  }
+}
+
+setInterval(searchAndClickCoin, 1000);
 
 // Функция для клика по ячейке
 function clickCell(row, col) {
