@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        *://bybitcoinsweeper.com/*
 // @grant        none
-// @version      1.5
+// @version      1.6
 // @author       mudachyo
 // @icon         https://mudachyo.codes/bybit/logo.jpg
 // @downloadURL  https://github.com/mudachyo/Bybit-Coinsweeper/raw/main/bybit-autoclicker.user.js
@@ -142,8 +142,11 @@ function searchAndClickCoin() {
   if (coinElement) {
     console.log('Найдена монета:', coinElement.src);
     try {
-      coinElement.click();
-      console.log('Выполнен клик по монете');
+      const delay = Math.random() * (5000 - 3000) + 3000;
+      setTimeout(() => {
+        coinElement.click();
+        console.log('Выполнен клик по монете после паузы в', delay, 'мс');
+      }, delay);
     } catch (error) {
       console.error('Ошибка при попытке клика:', error);
     }
@@ -199,7 +202,7 @@ function clickCell(row, col) {
 
     const cellIndex = row * totalColumns + col;
     const cell = cellsSnapshot.snapshotItem(cellIndex);
-    const randomDelay = Math.floor(Math.random() * (3000 - 300 + 1) + 300);
+    const randomDelay = Math.floor(Math.random() * (5000 - 300 + 1) + 300);
 
     if (cell) {
         setTimeout(() => {
