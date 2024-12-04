@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        *://bybitcoinsweeper.com/*
 // @grant        none
-// @version      1.6
+// @version      1.7
 // @author       mudachyo
 // @icon         https://mudachyo.codes/bybit/logo.jpg
 // @downloadURL  https://github.com/mudachyo/Bybit-Coinsweeper/raw/main/bybit-autoclicker.user.js
@@ -16,7 +16,7 @@
   function waitForGameBoard() {
     return new Promise((resolve) => {
       const checkInterval = setInterval(() => {
-        const gameBoardXPath = '/html/body/div[2]/section';
+        const gameBoardXPath = '//*[@id="root"]/div/section';
         const gameBoardResult = document.evaluate(
           gameBoardXPath,
           document,
@@ -137,7 +137,7 @@ clickPlayNowButton();
 
 // Функция для поиска и клика по монете
 function searchAndClickCoin() {
-  const coinElement = document.querySelector('div img[src^="/assets/MNT"]');
+  const coinElement = document.querySelector('div img[src^="/assets/6thCoin"]');
   
   if (coinElement) {
     console.log('Найдена монета:', coinElement.src);
